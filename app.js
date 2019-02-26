@@ -8,9 +8,10 @@ const mongoose = require('mongoose');
 const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
+const sassMiddleware = require('node-sass-middleware');
 
 // notifications handle
-// const { notifications } = require('./assets');
+// const { notifications } = require('./middlewares');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -30,8 +31,16 @@ const usersRouter = require('./routes/users');
 
 const app = express();
 
+// scss un css muy molon 
+app.use(sassMiddleware({
+  src: path.join(__dirname, 'public'),
+  dest: path.join(__dirname, 'public'),
+  indentedSyntax: false, // true = .sass and false = .scss
+	sourceMap: true, // true for .map; false no .map file
+}));
+
 // app title
-// app.locals.title = "";
+app.locals.title = "Start Kit";
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -45,6 +54,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
 // app.use(session({
 //   store: new MongoStore({
 //     mongooseConnection: mongoose.connection,
@@ -64,6 +74,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //   next();
 // });
 // app.use(notifications);
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
